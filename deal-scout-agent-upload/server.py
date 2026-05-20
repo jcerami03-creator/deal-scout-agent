@@ -96,7 +96,10 @@ def search_serpapi(query, size):
             "num": 10,
         }
     )
+if os.path.exists("/etc/ssl/cert.pem"):
     context = ssl.create_default_context(cafile="/etc/ssl/cert.pem")
+else:
+    context = ssl.create_default_context()
     with urlopen(f"https://serpapi.com/search.json?{params}", timeout=20, context=context) as response:
         payload = json.loads(response.read().decode("utf-8"))
 
