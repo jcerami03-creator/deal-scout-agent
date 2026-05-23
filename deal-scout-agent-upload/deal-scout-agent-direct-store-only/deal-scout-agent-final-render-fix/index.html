@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Deal Scout Agent</title>
+    <link rel="stylesheet" href="styles.css?v=direct-store-3" />
+    <style>
+      .searchForm {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+
+      .searchForm > label,
+      #autoSearch,
+      .searchForm > button[type="submit"] {
+        display: none !important;
+      }
+
+      #voiceSearch {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="intro">
+        <div>
+          <p class="eyebrow">First AI agent project</p>
+          <h1>Deal Scout Agent</h1>
+          <p class="lede">
+            Compare a clothing item across stores and resale sites by total cost:
+            item price, shipping, trust, and match quality.
+          </p>
+        </div>
+      </section>
+
+      <section class="searchPanel" aria-label="Deal scout search">
+        <form id="productForm" class="searchForm">
+          <label class="searchField">
+            <span>Product name or link</span>
+            <input
+              id="productName"
+              name="productName"
+              type="text"
+              placeholder="Hollister graphic t-shirt"
+              required
+            />
+          </label>
+
+          <button id="voiceSearch" type="button" class="secondary voiceButton">
+            Speak Search
+          </button>
+
+          <label>
+            <span>Category</span>
+            <select id="category" name="category">
+              <option value="clothing" selected>Clothing</option>
+              <option value="shoes">Shoes</option>
+              <option value="accessories">Accessories</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Type</span>
+            <select id="productType" name="productType">
+              <option value="">Any</option>
+              <option value="shirt">Shirt</option>
+              <option value="t-shirt">T-shirt</option>
+              <option value="polo">Polo</option>
+              <option value="hoodie">Hoodie</option>
+              <option value="sweatshirt">Sweatshirt</option>
+              <option value="shorts">Shorts</option>
+              <option value="pants">Pants</option>
+              <option value="jeans">Jeans</option>
+              <option value="jacket">Jacket</option>
+              <option value="dress">Dress</option>
+              <option value="skirt">Skirt</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Color</span>
+            <input id="color" name="color" type="text" placeholder="Any" list="colorOptions" />
+            <datalist id="colorOptions">
+              <option value="black"></option>
+              <option value="white"></option>
+              <option value="navy"></option>
+              <option value="gray"></option>
+              <option value="blue"></option>
+              <option value="green"></option>
+              <option value="red"></option>
+              <option value="pink"></option>
+              <option value="cream"></option>
+              <option value="khaki"></option>
+            </datalist>
+          </label>
+
+          <label>
+            <span>Size</span>
+            <select id="size" name="size">
+              <option>XS</option>
+              <option>S</option>
+              <option selected>M</option>
+              <option>L</option>
+              <option>XL</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Budget</span>
+            <input id="maxPrice" name="maxPrice" type="number" min="0" step="0.01" value="45" />
+          </label>
+
+          <label class="toggleField">
+            <input id="trustedOnly" type="checkbox" checked />
+            <span>Trusted only</span>
+          </label>
+
+          <button id="autoSearch" type="button">Auto Search</button>
+          <button type="submit" class="secondary">Re-rank</button>
+        </form>
+        <p id="voiceStatus" class="voiceStatus">Say what you want, including brand, item, color, size, and budget.</p>
+        <p id="searchStatus" class="muted">Ready. Speak a product and the links will appear below.</p>
+      </section>
+
+      <section class="statusBar" aria-label="Agent status">
+        <div>
+          <span id="serverDot" class="dot"></span>
+          <span id="serverStatus">Checking server...</span>
+        </div>
+        <div>
+          <span>Shareable public link:</span>
+          <span id="publicLink">Deploy online to create one</span>
+        </div>
+      </section>
+
+      <section class="results" aria-live="polite">
+        <div class="panel">
+          <div class="panelHeader">
+            <div>
+              <h2>Agent Recommendation</h2>
+              <p id="summary" class="muted">Add listings, then run the analysis.</p>
+            </div>
+          </div>
+
+          <div id="bestDeal" class="bestDeal"></div>
+          <div id="resultsGrid" class="resultsGrid"></div>
+          <div id="emptyState" class="emptyState">
+            <h3>Search for a product to start.</h3>
+            <p>Try a specific phrase like “Hollister graphic t-shirt” or “Nike vintage hoodie”.</p>
+          </div>
+        </div>
+
+        <aside class="panel">
+          <h2>Agent Settings</h2>
+          <p class="muted">Tune how the agent ranks deals. Your changes save in this browser.</p>
+
+          <div class="settings">
+            <label>
+              <span>Price importance</span>
+              <input id="priceWeight" type="range" min="1" max="10" value="6" />
+            </label>
+            <label>
+              <span>Match importance</span>
+              <input id="matchWeight" type="range" min="1" max="10" value="5" />
+            </label>
+            <label>
+              <span>Trust importance</span>
+              <input id="trustWeight" type="range" min="1" max="10" value="3" />
+            </label>
+            <button id="resetSettings" type="button" class="secondary">Reset Settings</button>
+          </div>
+        </aside>
+      </section>
+
+      <section class="workspace" aria-label="Listing editor">
+        <section class="panel">
+          <div class="panelHeader">
+            <div>
+              <h2>Review Listings</h2>
+              <p class="muted">Edit prices, shipping, match, or trust if the agent guessed wrong.</p>
+            </div>
+            <button id="addListing" type="button" class="secondary">Add Listing</button>
+          </div>
+
+          <div id="listingRows" class="listingRows"></div>
+        </section>
+
+        <aside class="panel">
+          <h2>Search Shortcuts</h2>
+          <p class="muted">Use these for manual research or to double-check an automatic result.</p>
+          <div id="searchLinks" class="searchLinks"></div>
+        </aside>
+      </section>
+    </main>
+
+    <script src="app.js?v=direct-store-3"></script>
+  </body>
+</html>
